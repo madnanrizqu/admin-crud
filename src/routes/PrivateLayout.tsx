@@ -15,6 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router-dom";
 
 import { useAuthStore } from "@/store/auth";
+import { ThemeToggler } from "@/ui/ThemeToggler";
 
 import classes from "./PrivateLayout.module.css";
 
@@ -41,7 +42,10 @@ export default function ResponsiveSizes() {
               hiddenFrom="sm"
               size="sm"
             />
-            <Text>Admin CRUD</Text>
+            <Flex gap="sm" align="center">
+              <Text>Admin CRUD</Text>
+              <ThemeToggler />
+            </Flex>
           </Group>
 
           <Flex align="center" gap="sm">

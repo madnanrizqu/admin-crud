@@ -1,13 +1,17 @@
-import { Center, Container } from "@mantine/core";
+import { Center, Container, Stack } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 
-import classes from "./PublicLayout.module.css";
+import { ThemeToggler } from "@/ui/ThemeToggler";
+
 const PublicLayout = () => {
   return (
     <Container pt="xl">
       <Center>
-        <div className={classes.innerContainer}>
-          <Outlet />
+        <div>
+          <Stack gap="sm">
+            <ThemeToggler />
+            <Outlet />
+          </Stack>
         </div>
       </Center>
     </Container>
