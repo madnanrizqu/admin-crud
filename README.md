@@ -31,4 +31,4 @@ This repo is connected to Vercel's CI/CD. Any git push to main branch will trigg
 
 # Deployment URL
 
-Link: https://admin-crud-six.vercel.app/login
+Link: https://admin-crud-api-production.up.railway.app
