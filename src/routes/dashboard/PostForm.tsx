@@ -31,10 +31,12 @@ export const PostForm = (props: PostFormProps) => {
             minRows={10}
             {...form.getInputProps("content")}
           />
-          <TextInput
-            label="Author email"
-            {...form.getInputProps("authorEmail")}
-          />
+          {!props.initialData && (
+            <TextInput
+              label="Author email"
+              {...form.getInputProps("authorEmail")}
+            />
+          )}
           <Button type="submit">Submit</Button>
         </Stack>
       </form>

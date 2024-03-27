@@ -15,9 +15,9 @@ import { notifications } from "@mantine/notifications";
 import { isAxiosError } from "axios";
 import { useState } from "react";
 
-import { createPost, getPosts } from "@/api/post";
+import { createPost, getPosts, updatePost } from "@/api/post";
 import { useFetch } from "@/hooks/useFetch";
-import { Post } from "@/type/post";
+import { PostAsResponse } from "@/type/post";
 import { pagination } from "@/utils/pagination";
 
 import { PostForm } from "./PostForm";
@@ -122,7 +122,7 @@ const posts = [
 ];
 
 export const Dashboard = () => {
-  const [drawer, setDrawer] = useState<"create" | "edit" | "detail" | "none">(
+  const [drawer, setDrawer] = useState<"create" | "update" | "detail" | "none">(
     "none",
   );
   const [modal, setModal] = useState<"delete" | "none">("none");
@@ -189,10 +189,10 @@ export const Dashboard = () => {
                           color="yellow"
                           onClick={() => {
                             setSelectedPostId(post.id);
-                            setDrawer("edit");
+                            setDrawer("update");
                           }}
                         >
-                          Edit
+                          Update
                         </Button>
                         <Button
                           size="xs"
@@ -248,7 +248,7 @@ export const Dashboard = () => {
       </Modal>
       <Drawer
         title={`${drawer === "create" ? "Create" : "Update"} Post`}
-        opened={drawer === "create" || drawer === "edit"}
+        opened={drawer === "create" || drawer === "update"}
         onClose={() => setDrawer("none")}
       >
         <LoadingOverlay
@@ -256,11 +256,17 @@ export const Dashboard = () => {
         />
         <PostForm
           initialData={(() => {
-            if (drawer === "edit" && selectedPostId) {
-              const post = posts.find((v) => v.id === selectedPostId) as Post;
+            if (
+              drawer === "update" &&
+              selectedPostId &&
+              tableQuery.data?.posts
+            ) {
+              const post = tableQuery.data.posts.find(
+                (v) => v.id === selectedPostId,
+              ) as PostAsResponse;
 
               return {
-                authorEmail: post.authorEmail,
+                authorEmail: post.author.email,
                 content: post.content,
                 title: post.title,
               };
@@ -277,6 +283,37 @@ export const Dashboard = () => {
                 notifications.show({
                   title: "Success",
                   message: `Created post with title ${res.data?.title}`,
+                });
+
+                setDrawer("none");
+
+                tableQuery.refetch();
+              } catch (error) {
+                if (isAxiosError(error)) {
+                  notifications.show({
+                    title: "Something went wrong",
+                    message: JSON.stringify(error.response?.data),
+                  });
+                } else {
+                  notifications.show({
+                    title: "Something went wrong",
+                    message: "Please try again later",
+                  });
+                }
+              } finally {
+                setLoading("none");
+              }
+            } else if (drawer === "update") {
+              try {
+                setLoading("update");
+                await updatePost(selectedPostId as number, {
+                  content: formValue.content,
+                  title: formValue.title,
+                });
+
+                notifications.show({
+                  title: "Success",
+                  message: `Updated post with id ${selectedPostId}`,
                 });
 
                 setDrawer("none");

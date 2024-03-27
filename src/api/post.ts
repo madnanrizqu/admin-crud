@@ -1,7 +1,8 @@
-import { TypeOf, z } from "zod";
+import { optional, TypeOf, z } from "zod";
 
 import { fetcher } from "@/lib";
 import { Pagination } from "@/type/pagination";
+import { PostAsResponse } from "@/type/post";
 
 import { ApiResponse } from "./type";
 
@@ -28,17 +29,7 @@ export const createPost = async (data: CreatePostData) => {
 
 export type GetPostsResponse = ApiResponse<{
   total: number;
-  posts: Array<{
-    id: number;
-    title: string;
-    content: string;
-    published: boolean;
-    authorId: number;
-    author: {
-      id: number;
-      name: string;
-    };
-  }>;
+  posts: Array<PostAsResponse>;
 }>;
 export const getPosts = async (args?: Pagination) => {
   const searchParams = args
@@ -48,4 +39,26 @@ export const getPosts = async (args?: Pagination) => {
   return await fetcher
     .get<GetPostsResponse>(`/post?${searchParams}`)
     .then((res) => res.data.data);
+};
+
+export const updatePostSchema = z
+  .object({
+    title: optional(z.string()),
+    content: optional(z.string()),
+  })
+  .refine(
+    (obj) => {
+      for (const val of Object.values(obj)) {
+        if (val !== undefined) return true;
+      }
+      return false;
+    },
+    {
+      message: "Must have at least one property defined",
+    },
+  );
+
+export type UpdatePostData = TypeOf<typeof updatePostSchema>;
+export const updatePost = async (postId: number, data: UpdatePostData) => {
+  return await fetcher.put(`/post/${postId}`, data);
 };
