@@ -15,111 +15,12 @@ import { notifications } from "@mantine/notifications";
 import { isAxiosError } from "axios";
 import { useState } from "react";
 
-import { createPost, getPosts, updatePost } from "@/api/post";
+import { createPost, deletePost, getPosts, updatePost } from "@/api/post";
 import { useFetch } from "@/hooks/useFetch";
 import { PostAsResponse } from "@/type/post";
 import { pagination } from "@/utils/pagination";
 
 import { PostForm } from "./PostForm";
-
-const posts = [
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-  {
-    id: 1,
-    title: "6 konsep utama untuk menguasai Digital Marketing!",
-    content: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo itaque, alias error aliquam veniam eligendi necessitatibus voluptate voluptatibus nobis ratione modi eos aut iusto tenetur asperiores laboriosam eaque debitis cum.
-    Consectetur distinctio deleniti fugiat, vel minus, voluptatem dolorem laborum quaerat et, fuga a? Eligendi facere aliquam praesentium numquam vitae doloribus fugit nesciunt possimus unde nemo assumenda, ipsum dolore, aspernatur quod.
-    Iste laudantium nihil, harum, ab cum doloribus temporibus minima dicta impedit accusamus maxime corporis aspernatur similique voluptates eos quasi porro ea quis perspiciatis nobis quibusdam possimus delectus? Rem, velit unde!
-    Vero harum ea voluptatem? Iusto eos, numquam nobis, ut possimus hic atque veniam nemo laboriosam corporis, neque deleniti distinctio placeat ab quam! Voluptate assumenda error quibusdam sunt eligendi iure sed.
-    Ab blanditiis quod quaerat delectus optio soluta doloribus explicabo suscipit, deleniti voluptates similique sunt dolores in, itaque ullam nihil, ea dignissimos iste nostrum ipsum voluptas maxime. Molestias voluptates nisi incidunt?
-    Incidunt aspernatur consequatur illo ratione reprehenderit recusandae dolorem similique optio, accusamus culpa consectetur libero quae deserunt tempore laudantium iusto ex debitis. Explicabo inventore, optio architecto reprehenderit voluptatem natus nobis commodi.
-    Beatae explicabo voluptas quam molestias quisquam quas minus consequatur at iusto! Nostrum deleniti similique nobis illo omnis reprehenderit inventore. Illo accusantium modi reprehenderit, voluptas explicabo accusamus quos neque omnis unde.
-    Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
-    Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
-    Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorEmail: "johndoe@gmail.com",
-    authorName: "John",
-  },
-];
 
 export const Dashboard = () => {
   const [drawer, setDrawer] = useState<"create" | "update" | "detail" | "none">(
@@ -235,12 +136,39 @@ export const Dashboard = () => {
         title="Are you sure you want to delete the post?"
       >
         <Stack>
-          <Text>{`Post to be deleted: ${posts.find((p) => p.id === selectedPostId)?.title}`}</Text>
+          <LoadingOverlay visible={loading === "delete"} />
+          <Text>{`Post to be deleted: ${tableQuery.data?.posts.find((p) => p.id === selectedPostId)?.title ?? ""}`}</Text>
           <Flex gap="sm">
             <Button flex="1" variant="outline" color="dark">
               Cancel
             </Button>
-            <Button flex="1" variant="outline" color="red">
+            <Button
+              flex="1"
+              variant="outline"
+              color="red"
+              onClick={async () => {
+                try {
+                  setLoading("delete");
+                  await deletePost(selectedPostId as number);
+
+                  notifications.show({
+                    title: `Success!`,
+                    message: `Deleted post with id: ${selectedPostId}`,
+                  });
+                  tableQuery.refetch();
+                } catch (error) {
+                  notifications.show({
+                    title: "Something went wrong",
+                    message: isAxiosError(error)
+                      ? JSON.stringify(error.response?.data)
+                      : "Please try again later",
+                  });
+                } finally {
+                  setModal("none");
+                  setLoading("none");
+                }
+              }}
+            >
               Delete
             </Button>
           </Flex>

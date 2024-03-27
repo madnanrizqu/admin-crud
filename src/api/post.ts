@@ -62,3 +62,7 @@ export type UpdatePostData = TypeOf<typeof updatePostSchema>;
 export const updatePost = async (postId: number, data: UpdatePostData) => {
   return await fetcher.put(`/post/${postId}`, data);
 };
+
+export const deletePost = async (postId: number) => {
+  return await fetcher.delete(`/post/${postId}`);
+};
