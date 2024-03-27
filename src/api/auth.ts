@@ -2,70 +2,49 @@ import { AxiosResponse } from "axios";
 import { TypeOf, z } from "zod";
 
 import { fetcher } from "@/lib";
+import { User } from "@/type/user";
 
 export const loginRequestSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(6, "Password must be at least 8 characters"),
 });
-
 export type LoginRequest = TypeOf<typeof loginRequestSchema>;
-
-export type User = {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  email: string;
-  name: string;
-  whatsapp: string;
-};
-
-export type LoginResponse = {
-  data: {
-    token: string;
-    user: User;
-  };
-};
-
+type LoginResponse = ApiResponse<{
+  accessToken: string;
+}>
 export const login = async ({
-  userType,
   email,
   password,
-}: LoginRequest & { userType: string }) => {
-  const res = await fetcher.post<object, AxiosResponse<LoginResponse>>(
-    `/v1/auth/login/${userType}`,
+}: LoginRequest) => {
+  return await fetcher.post<LoginResponse>(
+    `/auth/login`,
     { email, password },
-  );
-
-  return res.data.data;
+  ).then(res => res.data)
 };
+
+type GetCurrentUserResponse = ApiResponse<{
+  id: number;
+  name: string;
+  email: string;
+}>
+export const getCurrentUser = async () => {
+  return await fetcher.get<GetCurrentUserResponse>("/auth/me").then(res => res.data)
+}
 
 export const registerRequestSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1, "Name is required"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  passwordConfirm: z
-    .string()
-    .min(8, "Password confirm must be at least 8 characters"),
-  whatsapp: z.string().min(1, "Whatsapp is required"),
 });
-
 export type RegisterRequest = TypeOf<typeof registerRequestSchema>;
-
 export const register = async ({
-  userType,
   name,
   email,
   password,
-  passwordConfirm,
-  whatsapp,
-}: RegisterRequest & {
-  userType: string;
-}) => {
-  return await fetcher.post(`/v1/auth/register/${userType}`, {
+}: RegisterRequest) => {
+  return await fetcher.post(`/auth/register`, {
     email,
     name,
     password,
-    passwordConfirm,
-    whatsapp,
   });
 };

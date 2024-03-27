@@ -12,21 +12,21 @@ import { notifications } from "@mantine/notifications";
 import { isAxiosError } from "axios";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { login, LoginRequest, loginRequestSchema } from "@/api/auth";
-import { useAuth } from "@/providers/AuthProvider";
+import { LoginRequest, getCurrentUser, login, loginRequestSchema } from "@/api/auth";
+import { useAuthStore } from "@/store/auth";
+import { User } from "@/type/user";
+
 const Login = () => {
-  const navigate = useNavigate();
-  const [searchParam] = useSearchParams();
-  const auth = useAuth();
+  const authStore = useAuthStore();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginRequest>({
     initialValues: {
-      email: "",
-      password: "",
+      email: "johndoe@gmail.com",
+      password: "johndoe",
     },
     validate: zodResolver(loginRequestSchema),
   });
@@ -34,18 +34,21 @@ const Login = () => {
   const handleLogin = async (val: LoginRequest) => {
     try {
       setIsLoading(true);
-      const res = await login({
-        userType: searchParam.get("user_type") as "trainer" | "customer",
+      const resLogin = await login({
         email: val.email,
         password: val.password,
       });
 
-      auth.onLoginSuccess(res.token, res.user);
+      authStore.setToken(resLogin.data?.accessToken as string)
+      
+      const resGetUser = await getCurrentUser()
+      console.log(resGetUser.data);
+      
+      authStore.setUser(resGetUser.data as User)
 
       notifications.show({
         title: "Success!",
-        message: "Redirecting you to app...",
-        onClose: () => navigate("/app-trainer"),
+        message: "Welcome to the dashboard"
       });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -70,7 +73,7 @@ const Login = () => {
   return (
     <Stack>
       <Title order={1}>Login</Title>
-      <Text>Hi {searchParam.get("user_type")}!</Text>
+      <Text>Hi! Go ahead and fill in your credentials to use the app</Text>
 
       <form onSubmit={form.onSubmit(handleLogin)}>
         <Stack>
@@ -82,7 +85,7 @@ const Login = () => {
           <Stack>
             <Anchor
               component={Link}
-              to={`/register?user_type=${searchParam.get("user_type")}`}
+              to={`/register`}
             >
               Register
             </Anchor>

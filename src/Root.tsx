@@ -3,17 +3,18 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Register from "@/routes/Register";
 import ErrorPage from "@/utils/ErrorPage";
 
-import { AuthProvider } from "./providers/AuthProvider";
 import Login from "./routes/Login";
 import PublicLayout from "./routes/PublicLayout";
 import { RootLayout } from "./routes/RootLayout";
+import PrivateLayout from "./routes/PrivateLayout";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import { Dashboard } from "./routes/Dashboard";
+import { RedirectIfLogin } from "./utils/RedirectIfLogin";
 
 const routeRoot = createBrowserRouter([
   {
     element: (
-      <AuthProvider>
         <RootLayout />
-      </AuthProvider>
     ),
     errorElement: <ErrorPage />,
     children: [
@@ -27,17 +28,26 @@ const routeRoot = createBrowserRouter([
           {
             path: "/login",
             element: (
-                <Login />
+                <RedirectIfLogin><Login /></RedirectIfLogin>
             )
           },
           {
             path: "/register",
             element: (
-                <Register />
+                <RedirectIfLogin><Register /></RedirectIfLogin>
             ),
           },
         ],
       },
+      {
+        element: <PrivateLayout />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <ProtectedRoute><Dashboard /></ProtectedRoute>
+          }
+        ]
+      }
     ],
   },
 ]);

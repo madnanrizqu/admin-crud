@@ -1,16 +1,14 @@
+import { useAuthStore } from "@/store/auth";
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-
-import { useAuth } from "../providers/AuthProvider";
 
 type ProtectedRouteProps = {
   children: ReactNode;
 };
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const auth = useAuth();
-  console.log("auth", auth);
+  const authStore = useAuthStore();
 
-  if (!auth?.token) {
+  if (!authStore?.token) {
     return <Navigate to={"/"} />;
   }
 

@@ -1,3 +1,7 @@
+import { useAuthStore } from "@/store/auth";
+
 export const Dashboard = () => {
-  return <div>Dashboard</div>;
+  const authStore = useAuthStore();
+
+  return <div>Dashboard. Hi, {authStore.user?.name}!</div>;
 };
