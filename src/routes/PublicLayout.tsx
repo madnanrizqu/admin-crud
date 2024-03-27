@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import classes from "./PublicLayout.module.css";
 const PublicLayout = () => {
   return (
-    <Container>
+    <Container pt="xl">
       <Center>
         <div className={classes.innerContainer}>
           <Outlet />

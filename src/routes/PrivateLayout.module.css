@@ -1,0 +1,30 @@
+.root {
+  height: 100vh;
+}
+
+.navbar {
+  padding: 8px 32px;
+  border-bottom: 1px solid black;
+}
+
+.sidebar {
+  min-width: 240px;
+  padding: 24px 32px;
+  border-right: 1px solid black;
+}
+
+.mainSidebarContainer {
+  overflow-y: auto;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.main {
+  flex: 1;
+  padding: 24px 32px 24px 0px;
+  overflow-y: auto;
+}

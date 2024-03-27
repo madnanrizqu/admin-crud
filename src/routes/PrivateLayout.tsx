@@ -1,15 +1,15 @@
-import { Button, Container, Flex, Text } from "@mantine/core";
+import { Button, Flex, Text } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 
 import { useAuthStore } from "@/store/auth";
 
-import classes from "./PublicLayout.module.css";
+import classes from "./PrivateLayout.module.css";
 
 export default function PrivateLayout() {
   const authStore = useAuthStore();
 
   return (
-    <Container>
+    <Flex direction="column" className={classes.root}>
       <header className={classes.navbar}>
         <Flex justify="space-between" align="center">
           <Text>CRUD Admin</Text>
@@ -25,9 +25,21 @@ export default function PrivateLayout() {
           </Flex>
         </Flex>
       </header>
-      <main>
-        <Outlet />
-      </main>
-    </Container>
+
+      <Flex gap="24px" flex="1" className={classes.mainSidebarContainer}>
+        <aside className={classes.sidebar}>
+          <nav>
+            <ul>
+              <li>
+                <li>Home</li>
+              </li>
+            </ul>
+          </nav>
+        </aside>
+        <main className={classes.main}>
+          <Outlet />
+        </main>
+      </Flex>
+    </Flex>
   );
 }
