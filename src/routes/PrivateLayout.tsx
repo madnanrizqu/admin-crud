@@ -71,7 +71,7 @@ export default function ResponsiveSizes() {
         <Flex direction="column" justify="space-between" flex="1">
           <List className={classes.sidebarList} spacing="md">
             <ListItem w="100%" flex="1" className={classes.sidebarListItem}>
-              <NavLink label="Dashboard" />
+              <NavLink label="Dashboard" active />
             </ListItem>
           </List>
         </Flex>
