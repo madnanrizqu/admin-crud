@@ -1,12 +1,15 @@
 import {
   Button,
+  Drawer,
   Flex,
+  Modal,
   Pagination,
   Stack,
   Table,
   Text,
   Title,
 } from "@mantine/core";
+import { useState } from "react";
 
 const posts = [
   {
@@ -102,55 +105,112 @@ const posts = [
 ];
 
 export const Dashboard = () => {
+  const [drawer, setDrawer] = useState<"edit" | "detail" | "none">("none");
+  const [modal, setModal] = useState<"delete" | "none">("none");
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+
   return (
-    <Stack>
-      <Flex justify="space-between" align="center">
-        <Title>Dashboard</Title>
-        <Button>Add Post</Button>
-      </Flex>
+    <>
       <Stack>
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Id</Table.Th>
-              <Table.Th>Title</Table.Th>
-              <Table.Th>Content</Table.Th>
-              <Table.Th>Author</Table.Th>
-              <Table.Th></Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {posts.map((post) => (
-              <Table.Tr key={post.id}>
-                <Table.Td w="10px">{post.id}</Table.Td>
-                <Table.Td w="400px">{post.title}</Table.Td>
-                <Table.Td>
-                  <Flex gap="xs" align="center">
-                    <Text size="sm" w="300px" truncate="end">
-                      {post.content}
-                    </Text>
-                    <Button size="compact-xs" variant="subtle" color="dark">
-                      See more
-                    </Button>
-                  </Flex>
-                </Table.Td>
-                <Table.Td>{post.author}</Table.Td>
-                <Table.Td>
-                  <Flex>
-                    <Button size="xs" variant="subtle" color="yellow">
-                      Edit
-                    </Button>
-                    <Button size="xs" variant="subtle" color="red">
-                      Delete
-                    </Button>
-                  </Flex>
-                </Table.Td>
+        <Flex justify="space-between" align="center">
+          <Title>Dashboard</Title>
+          <Button>Add Post</Button>
+        </Flex>
+        <Stack>
+          <Table>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Id</Table.Th>
+                <Table.Th>Title</Table.Th>
+                <Table.Th>Content</Table.Th>
+                <Table.Th>Author</Table.Th>
+                <Table.Th></Table.Th>
               </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-        <Pagination total={10} />
+            </Table.Thead>
+            <Table.Tbody>
+              {posts.map((post) => (
+                <Table.Tr key={post.id}>
+                  <Table.Td w="10px">{post.id}</Table.Td>
+                  <Table.Td w="400px">{post.title}</Table.Td>
+                  <Table.Td>
+                    <Flex gap="xs" align="center">
+                      <Text size="sm" w="300px" truncate="end">
+                        {post.content}
+                      </Text>
+                      <Button
+                        size="compact-xs"
+                        variant="subtle"
+                        color="dark"
+                        onClick={() => {
+                          setSelectedPostId(post.id);
+                          setDrawer("detail");
+                        }}
+                      >
+                        See more
+                      </Button>
+                    </Flex>
+                  </Table.Td>
+                  <Table.Td>{post.author}</Table.Td>
+                  <Table.Td>
+                    <Flex>
+                      <Button
+                        size="xs"
+                        variant="subtle"
+                        color="yellow"
+                        onClick={() => {
+                          setSelectedPostId(post.id);
+                          setDrawer("edit");
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="xs"
+                        variant="subtle"
+                        color="red"
+                        onClick={() => {
+                          setSelectedPostId(post.id);
+                          setModal("delete");
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </Flex>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+          <Pagination total={10} />
+        </Stack>
       </Stack>
-    </Stack>
+      <Modal
+        opened={modal === "delete"}
+        onClose={() => setModal("none")}
+        title="Are you sure you want to delete the post?"
+      >
+        <Stack>
+          <Text>{`Post to be deleted: ${posts.find((p) => p.id === selectedPostId)?.title}`}</Text>
+          <Flex gap="sm">
+            <Button flex="1" variant="outline" color="dark">
+              Cancel
+            </Button>
+            <Button flex="1" variant="outline" color="red">
+              Delete
+            </Button>
+          </Flex>
+        </Stack>
+      </Modal>
+      <Drawer
+        title="Edit Post"
+        opened={drawer === "edit"}
+        onClose={() => setDrawer("none")}
+      ></Drawer>
+      <Drawer
+        title="Detail Content"
+        opened={drawer === "detail"}
+        onClose={() => setDrawer("none")}
+      ></Drawer>
+    </>
   );
 };
