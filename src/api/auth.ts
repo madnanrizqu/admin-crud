@@ -34,7 +34,7 @@ export const getCurrentUser = async () => {
 export const registerRequestSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1, "Name is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(6, "Password must be at least 8 characters"),
 });
 export type RegisterRequest = TypeOf<typeof registerRequestSchema>;
 export const register = async ({

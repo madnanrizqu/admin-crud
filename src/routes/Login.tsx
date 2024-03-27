@@ -25,8 +25,8 @@ const Login = () => {
 
   const form = useForm<LoginRequest>({
     initialValues: {
-      email: "johndoe@gmail.com",
-      password: "johndoe",
+      email: "",
+      password: "",
     },
     validate: zodResolver(loginRequestSchema),
   });
