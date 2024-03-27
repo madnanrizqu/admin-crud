@@ -1,5 +1,5 @@
 export type Post = {
   title: string;
   content: string;
-  authorId: number;
+  authorEmail: string;
 };

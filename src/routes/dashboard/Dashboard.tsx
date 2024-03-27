@@ -2,16 +2,23 @@ import {
   Button,
   Drawer,
   Flex,
+  LoadingOverlay,
   Modal,
   Pagination,
+  Skeleton,
   Stack,
   Table,
   Text,
   Title,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { isAxiosError } from "axios";
 import { useState } from "react";
 
+import { createPost, getPosts } from "@/api/post";
+import { useFetch } from "@/hooks/useFetch";
 import { Post } from "@/type/post";
+import { pagination } from "@/utils/pagination";
 
 import { PostForm } from "./PostForm";
 
@@ -29,7 +36,7 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
   {
@@ -45,7 +52,7 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
   {
@@ -61,7 +68,7 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
   {
@@ -77,7 +84,7 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
   {
@@ -93,7 +100,7 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
   {
@@ -109,14 +116,9 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    authorId: 1,
+    authorEmail: "johndoe@gmail.com",
     authorName: "John",
   },
-];
-
-const authors = [
-  { value: 1, label: "John" },
-  { value: 2, label: "Adnan" },
 ];
 
 export const Dashboard = () => {
@@ -125,6 +127,16 @@ export const Dashboard = () => {
   );
   const [modal, setModal] = useState<"delete" | "none">("none");
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<
+    "delete" | "update" | "create" | "none"
+  >("none");
+
+  const [page, setPage] = useState(1);
+  const take = 5;
+  const tableQuery = useFetch(
+    () => getPosts({ take, skip: pagination.calcSkip({ take, page }) }),
+    [page],
+  );
 
   return (
     <>
@@ -134,71 +146,87 @@ export const Dashboard = () => {
           <Button onClick={() => setDrawer("create")}>Add Post</Button>
         </Flex>
         <Stack>
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Id</Table.Th>
-                <Table.Th>Title</Table.Th>
-                <Table.Th>Content</Table.Th>
-                <Table.Th>Author</Table.Th>
-                <Table.Th></Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {posts.map((post) => (
-                <Table.Tr key={post.id}>
-                  <Table.Td w="10px">{post.id}</Table.Td>
-                  <Table.Td w="400px">{post.title}</Table.Td>
-                  <Table.Td>
-                    <Flex gap="xs" align="center">
-                      <Text size="sm" w="300px" truncate="end">
-                        {post.content}
-                      </Text>
-                      <Button
-                        size="compact-xs"
-                        variant="subtle"
-                        color="dark"
-                        onClick={() => {
-                          setSelectedPostId(post.id);
-                          setDrawer("detail");
-                        }}
-                      >
-                        See more
-                      </Button>
-                    </Flex>
-                  </Table.Td>
-                  <Table.Td>{post.authorName}</Table.Td>
-                  <Table.Td>
-                    <Flex>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        color="yellow"
-                        onClick={() => {
-                          setSelectedPostId(post.id);
-                          setDrawer("edit");
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="subtle"
-                        color="red"
-                        onClick={() => {
-                          setSelectedPostId(post.id);
-                          setModal("delete");
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    </Flex>
-                  </Table.Td>
+          {tableQuery.status === "success" && tableQuery.data?.posts && (
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Id</Table.Th>
+                  <Table.Th>Title</Table.Th>
+                  <Table.Th>Content</Table.Th>
+                  <Table.Th>Author</Table.Th>
+                  <Table.Th></Table.Th>
                 </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-          <Pagination total={10} />
+              </Table.Thead>
+              <Table.Tbody>
+                {tableQuery.data.posts.map((post) => (
+                  <Table.Tr key={post.id}>
+                    <Table.Td w="10px">{post.id}</Table.Td>
+                    <Table.Td w="400px">{post.title}</Table.Td>
+                    <Table.Td>
+                      <Flex gap="xs" align="center">
+                        <Text size="sm" w="300px" truncate="end">
+                          {post.content}
+                        </Text>
+                        <Button
+                          size="compact-xs"
+                          variant="subtle"
+                          color="dark"
+                          onClick={() => {
+                            setSelectedPostId(post.id);
+                            setDrawer("detail");
+                          }}
+                        >
+                          See more
+                        </Button>
+                      </Flex>
+                    </Table.Td>
+                    <Table.Td>{post.author.name}</Table.Td>
+                    <Table.Td>
+                      <Flex>
+                        <Button
+                          size="xs"
+                          variant="subtle"
+                          color="yellow"
+                          onClick={() => {
+                            setSelectedPostId(post.id);
+                            setDrawer("edit");
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="xs"
+                          variant="subtle"
+                          color="red"
+                          onClick={() => {
+                            setSelectedPostId(post.id);
+                            setModal("delete");
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </Flex>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          )}
+
+          {(tableQuery.status === "loading" ||
+            tableQuery.status === "idle") && (
+            <Skeleton height="250px" width="100%" />
+          )}
+
+          <Pagination
+            disabled={tableQuery.status === "loading"}
+            total={pagination.calcMaxPage({
+              total: tableQuery.data?.total,
+              take,
+            })}
+            value={page}
+            onChange={(v) => setPage(v)}
+          />
         </Stack>
       </Stack>
       <Modal
@@ -223,13 +251,16 @@ export const Dashboard = () => {
         opened={drawer === "create" || drawer === "edit"}
         onClose={() => setDrawer("none")}
       >
+        <LoadingOverlay
+          visible={loading === "create" || loading === "update"}
+        />
         <PostForm
           initialData={(() => {
             if (drawer === "edit" && selectedPostId) {
               const post = posts.find((v) => v.id === selectedPostId) as Post;
 
               return {
-                authorId: post.authorId,
+                authorEmail: post.authorEmail,
                 content: post.content,
                 title: post.title,
               };
@@ -237,7 +268,37 @@ export const Dashboard = () => {
               return undefined;
             }
           })()}
-          authors={authors}
+          onSubmit={async (formValue) => {
+            if (drawer === "create") {
+              try {
+                setLoading("create");
+                const res = await createPost(formValue);
+
+                notifications.show({
+                  title: "Success",
+                  message: `Created post with title ${res.data?.title}`,
+                });
+
+                setDrawer("none");
+
+                tableQuery.refetch();
+              } catch (error) {
+                if (isAxiosError(error)) {
+                  notifications.show({
+                    title: "Something went wrong",
+                    message: JSON.stringify(error.response?.data),
+                  });
+                } else {
+                  notifications.show({
+                    title: "Something went wrong",
+                    message: "Please try again later",
+                  });
+                }
+              } finally {
+                setLoading("none");
+              }
+            }
+          }}
         />
       </Drawer>
       <Drawer
