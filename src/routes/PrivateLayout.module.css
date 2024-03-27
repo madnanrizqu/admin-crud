@@ -3,3 +3,8 @@
   margin: 0;
   list-style-type: none;
 }
+
+.sidebarListItem :global(.mantine-List-itemLabel),
+.sidebarListItem :global(.mantine-List-itemWrapper) {
+  width: 100%;
+}

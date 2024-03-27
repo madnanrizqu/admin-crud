@@ -1,4 +1,16 @@
-import { AppShell, Burger, Button, Flex, Group, Text } from "@mantine/core";
+import {
+  AppShell,
+  Avatar,
+  Burger,
+  Button,
+  Flex,
+  Group,
+  List,
+  ListItem,
+  NavLink,
+  Popover,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router-dom";
 
@@ -14,7 +26,7 @@ export default function ResponsiveSizes() {
     <AppShell
       header={{ height: { base: 60, md: 70, lg: 80 } }}
       navbar={{
-        width: { base: 200, md: 300, lg: 400 },
+        width: { base: 200, md: 300 },
         breakpoint: "sm",
         collapsed: { mobile: !opened },
       }}
@@ -32,25 +44,37 @@ export default function ResponsiveSizes() {
             <Text>Admin CRUD</Text>
           </Group>
 
-          <Flex direction="column">
-            <Text>Hi, {authStore.user?.name}</Text>
-            <Button
-              variant="outline"
-              size="xs"
-              onClick={() => authStore.clearState()}
-            >
-              Logout
-            </Button>
+          <Flex align="center" gap="sm">
+            <Text size="xs">Hi, {authStore.user?.name}</Text>
+
+            <Popover width={200} position="bottom" withArrow shadow="md">
+              <Popover.Target>
+                <Avatar radius="xl" style={{ cursor: "pointer" }} />
+              </Popover.Target>
+              <Popover.Dropdown>
+                <Button
+                  variant="subtle"
+                  fullWidth
+                  size="xs"
+                  color="red"
+                  onClick={() => authStore.clearState()}
+                >
+                  Logout
+                </Button>
+              </Popover.Dropdown>
+            </Popover>
           </Flex>
         </Flex>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        <nav>
-          <ul className={classes.sidebarList}>
-            <li>Home</li>
-          </ul>
-        </nav>
+        <Flex direction="column" justify="space-between" flex="1">
+          <List className={classes.sidebarList} spacing="md">
+            <ListItem w="100%" flex="1" className={classes.sidebarListItem}>
+              <NavLink label="Home" />
+            </ListItem>
+          </List>
+        </Flex>
       </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
