@@ -25,10 +25,14 @@ CRUD Admin panel. This is a web application that showcase login + CRUD
 2. Create .env file in root directory. Then copy paste the contents of .env.example. This will load 1 varibles that is used to determine the API BASE URL. For your convenience, right now it is pointing to the production API. You don't need to run the API locally
 3. Start development server. In terminal run: `yarn dev`
 
-# How to deploy
+# Deployment
+
+This web app is deployed in [Vercel](https://vercel.com)
+
+## How to deploy
 
 This repo is connected to Vercel's CI/CD. Any git push to main branch will trigger a redeploy
 
-# Deployment URL
+## Deployment URL
 
-Link: https://admin-crud-api-production.up.railway.app
+Link: https://admin-crud-six.vercel.app/login
