@@ -105,7 +105,9 @@ const posts = [
 ];
 
 export const Dashboard = () => {
-  const [drawer, setDrawer] = useState<"edit" | "detail" | "none">("none");
+  const [drawer, setDrawer] = useState<"create" | "edit" | "detail" | "none">(
+    "none",
+  );
   const [modal, setModal] = useState<"delete" | "none">("none");
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
@@ -114,7 +116,7 @@ export const Dashboard = () => {
       <Stack>
         <Flex justify="space-between" align="center">
           <Title>Dashboard</Title>
-          <Button>Add Post</Button>
+          <Button onClick={() => setDrawer("create")}>Add Post</Button>
         </Flex>
         <Stack>
           <Table>
@@ -202,8 +204,8 @@ export const Dashboard = () => {
         </Stack>
       </Modal>
       <Drawer
-        title="Edit Post"
-        opened={drawer === "edit"}
+        title={`${drawer === "create" ? "Create" : "Update"} Post`}
+        opened={drawer === "create" || drawer === "edit"}
         onClose={() => setDrawer("none")}
       ></Drawer>
       <Drawer
