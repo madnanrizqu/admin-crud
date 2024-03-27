@@ -1,8 +1,8 @@
-import { AxiosResponse } from "axios";
 import { TypeOf, z } from "zod";
 
 import { fetcher } from "@/lib";
-import { User } from "@/type/user";
+
+import { ApiResponse } from "./type";
 
 export const loginRequestSchema = z.object({
   email: z.string().email(),
@@ -11,25 +11,23 @@ export const loginRequestSchema = z.object({
 export type LoginRequest = TypeOf<typeof loginRequestSchema>;
 type LoginResponse = ApiResponse<{
   accessToken: string;
-}>
-export const login = async ({
-  email,
-  password,
-}: LoginRequest) => {
-  return await fetcher.post<LoginResponse>(
-    `/auth/login`,
-    { email, password },
-  ).then(res => res.data)
+}>;
+export const login = async ({ email, password }: LoginRequest) => {
+  return await fetcher
+    .post<LoginResponse>(`/auth/login`, { email, password })
+    .then((res) => res.data);
 };
 
 type GetCurrentUserResponse = ApiResponse<{
   id: number;
   name: string;
   email: string;
-}>
+}>;
 export const getCurrentUser = async () => {
-  return await fetcher.get<GetCurrentUserResponse>("/auth/me").then(res => res.data)
-}
+  return await fetcher
+    .get<GetCurrentUserResponse>("/auth/me")
+    .then((res) => res.data);
+};
 
 export const registerRequestSchema = z.object({
   email: z.string().email(),
@@ -37,11 +35,7 @@ export const registerRequestSchema = z.object({
   password: z.string().min(6, "Password must be at least 8 characters"),
 });
 export type RegisterRequest = TypeOf<typeof registerRequestSchema>;
-export const register = async ({
-  name,
-  email,
-  password,
-}: RegisterRequest) => {
+export const register = async ({ name, email, password }: RegisterRequest) => {
   return await fetcher.post(`/auth/register`, {
     email,
     name,

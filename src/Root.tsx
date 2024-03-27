@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Register from "@/routes/Register";
 import ErrorPage from "@/utils/ErrorPage";
 
-import { Dashboard } from "./routes/Dashboard";
+import { Dashboard } from "./routes/dashboard";
 import Login from "./routes/Login";
 import PrivateLayout from "./routes/PrivateLayout";
 import PublicLayout from "./routes/PublicLayout";

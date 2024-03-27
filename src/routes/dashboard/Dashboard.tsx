@@ -11,6 +11,10 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 
+import { Post } from "@/type/post";
+
+import { PostForm } from "./PostForm";
+
 const posts = [
   {
     id: 1,
@@ -25,7 +29,8 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
   {
     id: 1,
@@ -40,7 +45,8 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
   {
     id: 1,
@@ -55,7 +61,8 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
   {
     id: 1,
@@ -70,7 +77,8 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
   {
     id: 1,
@@ -85,7 +93,8 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
   {
     id: 1,
@@ -100,8 +109,14 @@ const posts = [
     Quidem omnis ut nulla, eum saepe debitis possimus esse architecto odit temporibus, reprehenderit obcaecati quia harum animi? Mollitia fugit ipsum repudiandae! Ex vero placeat a tempore est perferendis quam exercitationem.
     Natus laudantium deserunt, itaque ratione quaerat unde possimus aut dolor eaque voluptas hic saepe sint omnis quia, necessitatibus ipsam quos vel et exercitationem eius culpa fugiat quae? Sapiente, unde vero?
     Officia expedita corrupti alias eveniet non ducimus voluptas est excepturi recusandae molestiae eos necessitatibus, maiores consequuntur quam, enim, obcaecati suscipit sunt impedit aspernatur. Rerum eligendi vitae quo reiciendis quaerat consequatur.`,
-    author: "Budi",
+    authorId: 1,
+    authorName: "John",
   },
+];
+
+const authors = [
+  { value: 1, label: "John" },
+  { value: 2, label: "Adnan" },
 ];
 
 export const Dashboard = () => {
@@ -152,7 +167,7 @@ export const Dashboard = () => {
                       </Button>
                     </Flex>
                   </Table.Td>
-                  <Table.Td>{post.author}</Table.Td>
+                  <Table.Td>{post.authorName}</Table.Td>
                   <Table.Td>
                     <Flex>
                       <Button
@@ -207,7 +222,24 @@ export const Dashboard = () => {
         title={`${drawer === "create" ? "Create" : "Update"} Post`}
         opened={drawer === "create" || drawer === "edit"}
         onClose={() => setDrawer("none")}
-      ></Drawer>
+      >
+        <PostForm
+          initialData={(() => {
+            if (drawer === "edit" && selectedPostId) {
+              const post = posts.find((v) => v.id === selectedPostId) as Post;
+
+              return {
+                authorId: post.authorId,
+                content: post.content,
+                title: post.title,
+              };
+            } else {
+              return undefined;
+            }
+          })()}
+          authors={authors}
+        />
+      </Drawer>
       <Drawer
         title="Detail Content"
         opened={drawer === "detail"}

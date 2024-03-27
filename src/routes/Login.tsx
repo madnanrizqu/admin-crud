@@ -14,7 +14,12 @@ import { zodResolver } from "mantine-form-zod-resolver";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { LoginRequest, getCurrentUser, login, loginRequestSchema } from "@/api/auth";
+import {
+  getCurrentUser,
+  login,
+  LoginRequest,
+  loginRequestSchema,
+} from "@/api/auth";
 import { useAuthStore } from "@/store/auth";
 import { User } from "@/type/user";
 
@@ -39,16 +44,15 @@ const Login = () => {
         password: val.password,
       });
 
-      authStore.setToken(resLogin.data?.accessToken as string)
-      
-      const resGetUser = await getCurrentUser()
-      console.log(resGetUser.data);
-      
-      authStore.setUser(resGetUser.data as User)
+      authStore.setToken(resLogin.data?.accessToken as string);
+
+      const resGetUser = await getCurrentUser();
+
+      authStore.setUser(resGetUser.data as User);
 
       notifications.show({
         title: "Success!",
-        message: "Welcome to the dashboard"
+        message: "Welcome to the dashboard",
       });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -83,10 +87,7 @@ const Login = () => {
             Submit
           </Button>
           <Stack>
-            <Anchor
-              component={Link}
-              to={`/register`}
-            >
+            <Anchor component={Link} to={`/register`}>
               Register
             </Anchor>
           </Stack>
