@@ -44,7 +44,12 @@ export const Dashboard = () => {
       <Stack>
         <Flex justify="space-between" align="center">
           <Title>Dashboard</Title>
-          <Button onClick={() => setDrawer("create")}>Add Post</Button>
+          <Button
+            onClick={() => setDrawer("create")}
+            disabled={loading !== "none" || tableQuery.status !== "success"}
+          >
+            Add Post
+          </Button>
         </Flex>
         <Stack>
           {tableQuery.status === "success" && tableQuery.data?.posts && (
