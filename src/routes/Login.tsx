@@ -11,7 +11,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { isAxiosError } from "axios";
 import { zodResolver } from "mantine-form-zod-resolver";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import {
@@ -30,11 +30,19 @@ const Login = () => {
 
   const form = useForm<LoginRequest>({
     initialValues: {
-      email: "",
-      password: "",
+      email: "johndoe1@gmail.com",
+      password: "johndoe1",
     },
     validate: zodResolver(loginRequestSchema),
   });
+
+  useEffect(() => {
+    notifications.show({
+      title: "Welcome DOT team!",
+      message:
+        "You can use the prefilled user in the login form to use the app. Or you can register with your own email to create a new account",
+    });
+  }, []);
 
   const handleLogin = async (val: LoginRequest) => {
     try {
